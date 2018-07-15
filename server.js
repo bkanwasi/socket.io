@@ -42,4 +42,22 @@ users = [];
        io.sockets.emit('Get User',users);
      }
 
+     //who is typing
+      
+     socket.on('typing',function(data){
+
+       socket.broadcast.emit('typing',{name:socket.username});
+
+     });
+
+     socket.on('stopTyping',function(data){
+
+      socket.broadcast.emit('stopTyping',{name:socket.username});
+
+    });
+
+     
+
+     //
+
   });

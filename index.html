@@ -47,6 +47,7 @@
                     </div>
                     <div class="col-sm">
                             <div class="chat left" id="chat"></div>
+                            <div id="typing"></div>
                             <form id="messageform">
                                 <div class="form-group">
                                     <label> Enter Message</label>
@@ -86,14 +87,18 @@
         $("#messageform").submit(function(e){    
             
             e.preventDefault();
-            socket.emit('Send Message',$("#message").val());
-            $("#message").val('');
+            if($("#message").val() !=""){
+               
+                socket.emit('Send Message',$("#message").val());
+                $("#message").val('');
+            }
         }    
    );
 
    //  create new user details//
 
     socket.on('New Message',function(data){
+       // $("#typing").html('');
         $("#chat").append("<p class='text-justify'> <strong> "+data.username+" :</strong> "+data.msg+ "</p>");
     });
 
@@ -109,10 +114,37 @@
 
          $("#users").html(html);
     });
+
+
+      //who is typing keypresss.
+    $('#message').focus(function(e){
+     console.log("Key press");
+    socket.emit('typing',$("#username").val());
+
+    });
+
+   $('#message').focusout(function(e){
+      console.log("Key leave");
+      socket.emit('stopTyping',$("#username").val());
+
+    });
+
+   //fetching typing data record
+   socket.on('typing',function(data){
+       //console.log("server site data"+data.name);
+       $("#typing").html('<p><em>'+data.name+' is typing a message.. </em></p>');
+    });
+   
+     //fetching typing data record
+   socket.on('stopTyping',function(data){
+       //console.log("server site data"+data.name);
+       $("#typing").html('');
+    });
     
     });
 
 
+  
 
 </script>
 
